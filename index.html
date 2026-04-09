@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<title>PharmaPM Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#0B0F19;font-family:'DM Sans',system-ui,sans-serif;color:#F9FAFB}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:#111827}::-webkit-scrollbar-thumb{background:#374151;border-radius:3px}
+input{font-family:inherit;outline:none}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;cursor:pointer;border-left:3px solid transparent;transition:background .15s}
+.nav-item:hover{background:rgba(6,182,212,.08)}
+.nav-item.active{background:rgba(6,182,212,.12);border-left-color:#06B6D4}
+.badge{display:inline-flex;padding:2px 7px;border-radius:4px;font-size:10px;font-weight:600;letter-spacing:.3px}
+.grid{display:grid;gap:14px}
+.card{background:#1A1F2E;border-radius:12px;padding:20px;border:1px solid #1F2937}
+.section-title{display:flex;align-items:center;gap:8px;margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid #1F2937}
+.kpi{border-radius:12px;padding:16px 18px;border:1px solid #1F2937;background:#1A1F2E}
+table{width:100%;border-collapse:collapse}
+th{padding:6px 8px;text-align:left;font-size:9px;color:#6B7280;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #1F2937;font-weight:700}
+td{padding:8px;font-size:11px;color:#9CA3AF;border-bottom:1px solid #1F2937}
+.bar-bg{height:6px;background:rgba(255,255,255,.06);border-radius:6px;overflow:hidden}
+.bar-fill{height:100%;border-radius:6px;transition:width .6s ease}
+.heat-cell{border-radius:6px;min-height:40px;display:flex;flex-wrap:wrap;gap:3px;padding:4px;align-items:center;justify-content:center;border:1px solid #1F2937}
+.risk-dot{width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:7px;font-weight:800;color:#fff;cursor:pointer}
+.risk-card{display:flex;align-items:center;gap:10px;padding:12px;border-radius:8px;margin-bottom:6px;border:1px solid #1F2937}
+@media(max-width:768px){.grid-2{grid-template-columns:1fr!important}.grid-3{grid-template-columns:1fr!important}.grid-4{grid-template-columns:repeat(2,1fr)!important}.grid-6{grid-template-columns:repeat(2,1fr)!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+(function(){
+var C={bg:"#0B0F19",sb:"#111827",cd:"#1A1F2E",sf:"#0F1420",bd:"#1F2937",tx:"#F9FAFB",tm:"#9CA3AF",td:"#6B7280",ac:"#06B6D4",al:"#22D3EE",gn:"#10B981",am:"#F59E0B",rd:"#EF4444",bl:"#3B82F6",pu:"#8B5CF6",tl:"#14B8A6"};
+var P={name:"Project Helix",sub:"Veeva RIM Implementation",sys:"Veeva RIM",meth:"Hybrid (V-Model + Agile)",goLive:"2026-12-15",budget:{total:537000,used:28500}};
+var WS=[{id:"WS-1",n:"PM & Governance",ld:"Vineet Pathak",p:35},{id:"WS-2",n:"Business Process Design",ld:"Thomas Richter",p:20},{id:"WS-3",n:"Technical Configuration",ld:"James Wilson",p:10},{id:"WS-4",n:"Validation & Qualification",ld:"Anna Schmidt",p:25},{id:"WS-5",n:"Data/Document Migration",ld:"Maria Lopez",p:15},{id:"WS-6",n:"Integration Development",ld:"Raj Patel",p:5},{id:"WS-7",n:"Training & Change Mgmt",ld:"",p:0},{id:"WS-8",n:"Decommissioning",ld:"",p:0},{id:"WS-9",n:"Go-Live & Hypercare",ld:"",p:0}];
+var MS=[{id:1,ph:"Requirements",n:"URS Approved",ow:"Anna Schmidt",pl:"2026-06-15",st:"In Progress",pct:60,pr:null},{id:2,ph:"Requirements",n:"Val Plan Approved",ow:"Anna Schmidt",pl:"2026-06-30",st:"Not Started",pct:0,pr:1},{id:3,ph:"Design",n:"FS/DS Complete",ow:"James Wilson",pl:"2026-07-31",st:"Not Started",pct:0,pr:1},{id:4,ph:"Design",n:"Integration Specs",ow:"Raj Patel",pl:"2026-07-31",st:"Not Started",pct:0,pr:3},{id:5,ph:"Build Sprint 1",n:"Core Config",ow:"James Wilson",pl:"2026-08-15",st:"Not Started",pct:0,pr:3},{id:6,ph:"Build Sprint 2",n:"Reg + Publishing",ow:"James Wilson",pl:"2026-08-31",st:"Not Started",pct:0,pr:5},{id:7,ph:"Build Sprint 3",n:"Integration Build",ow:"Raj Patel",pl:"2026-09-30",st:"Not Started",pct:0,pr:4},{id:8,ph:"Migration",n:"Migration Spec",ow:"Maria Lopez",pl:"2026-07-31",st:"Not Started",pct:0,pr:1},{id:9,ph:"Migration",n:"Migration Exec",ow:"Maria Lopez",pl:"2026-10-15",st:"Not Started",pct:0,pr:8},{id:10,ph:"Qualification",n:"IQ/OQ Executed",ow:"Anna Schmidt",pl:"2026-10-15",st:"Not Started",pct:0,pr:7},{id:11,ph:"Qualification",n:"PQ/UAT",ow:"Anna Schmidt",pl:"2026-11-15",st:"Not Started",pct:0,pr:10},{id:12,ph:"Go-Live",n:"GO-LIVE",ow:"Vineet Pathak",pl:"2026-12-15",st:"Not Started",pct:0,pr:11}];
+var RK=[{id:"R-001",cat:"Vendor",d:"Veeva PS resource contention Aug-Oct",p:3,i:4,res:"Mitigate",ow:"Vineet Pathak",st:"Open",uf:false},{id:"R-002",cat:"Technical",d:"Legacy Documentum data quality issues",p:4,i:4,res:"Mitigate",ow:"Maria Lopez",st:"Open",uf:false},{id:"R-003",cat:"Technical",d:"MuleSoft middleware latency",p:3,i:3,res:"Mitigate",ow:"Raj Patel",st:"Open",uf:false},{id:"R-004",cat:"Regulatory",d:"HA Gateway spec change (eCTD 4.0)",p:2,i:5,res:"Avoid",ow:"Raj Patel",st:"Open",uf:false},{id:"R-005",cat:"Resource",d:"Reg Ops SMEs unavailable",p:4,i:3,res:"Mitigate",ow:"Thomas Richter",st:"Open",uf:false},{id:"R-006",cat:"Scope",d:"Cross-Vault scope expand (Safety)",p:3,i:3,res:"Accept",ow:"",st:"Open",uf:true}];
+var VN=[{n:"Veeva Professional Services",ty:"Implementation",h:800,u:120,r:200},{n:"QualityOne Consulting",ty:"Validation",h:400,u:30,r:150},{n:"IntegrationHub GmbH",ty:"Integration",h:300,u:0,r:190},{n:"DataMigrate Ltd",ty:"Migration",h:200,u:0,r:175}];
+var MODS=[{n:"RIM Submissions",l:"High",c:"High"},{n:"RIM Registrations",l:"High",c:"Medium"},{n:"RIM Publishing",l:"Medium",c:"Medium"},{n:"RIM Submissions Archive",l:"Low",c:"Low"}];
+var INTS=[{n:"Clinical Docs to RIM",s:"Vault Clinical",t:"Vault RIM",ty:"Cross-Vault",mw:"Vault Connector",cx:"Medium"},{n:"QMS Change Impact",s:"Vault Quality",t:"Vault RIM",ty:"Cross-Vault",mw:"Vault Connector",cx:"Low"},{n:"Safety Labeling",s:"Vault Safety",t:"Vault RIM",ty:"Cross-Vault",mw:"Vault Connector",cx:"Medium"},{n:"Product Master Data",s:"SAP ERP",t:"Vault RIM",ty:"External API",mw:"MuleSoft",cx:"High"},{n:"eCTD Submission",s:"Vault RIM",t:"FDA ESG / EMA",ty:"External API",mw:"Direct API",cx:"High"}];
+var DOCS=[{id:"DOC-001",n:"Project Plan",cat:"Core",st:"In Draft",ow:"Vineet"},{id:"DOC-002",n:"Risk Assessment",cat:"Core",st:"In Draft",ow:"Vineet"},{id:"DOC-003",n:"Validation Plan",cat:"Validation",st:"Not Started",ow:"Anna"},{id:"DOC-004",n:"URS",cat:"Validation",st:"In Draft",ow:"Anna"},{id:"DOC-005",n:"Functional Spec",cat:"Validation",st:"Not Started",ow:"James"},{id:"DOC-006",n:"Design Spec",cat:"Validation",st:"Not Started",ow:"James"},{id:"DOC-007",n:"IQ Protocol",cat:"Validation",st:"Not Started",ow:"Anna"},{id:"DOC-008",n:"OQ Protocol",cat:"Validation",st:"Not Started",ow:"Anna"},{id:"DOC-009",n:"PQ Protocol",cat:"Validation",st:"Not Started",ow:"Anna"},{id:"DOC-010",n:"Traceability Matrix",cat:"Validation",st:"Not Started",ow:"Anna"},{id:"DOC-011",n:"Val Summary Report",cat:"Validation",st:"Not Started",ow:"Anna"},{id:"DOC-012",n:"Migration Plan",cat:"Migration",st:"Not Started",ow:"Maria"},{id:"DOC-013",n:"Migration Spec",cat:"Migration",st:"Not Started",ow:"Maria"},{id:"DOC-014",n:"Int Spec - SAP",cat:"Integration",st:"Not Started",ow:"Raj"},{id:"DOC-015",n:"Int Spec - HA Gateway",cat:"Integration",st:"Not Started",ow:"Raj"},{id:"DOC-016",n:"Int Spec - Clinical",cat:"Integration",st:"Not Started",ow:"Raj"},{id:"DOC-017",n:"Int Spec - QMS",cat:"Integration",st:"Not Started",ow:"Raj"},{id:"DOC-018",n:"Int Spec - Safety",cat:"Integration",st:"Not Started",ow:"Raj"},{id:"DOC-019",n:"Decom Plan",cat:"Decommission",st:"Not Started",ow:""},{id:"DOC-020",n:"Vendor Assessment",cat:"Vendor",st:"Not Started",ow:"Anna"},{id:"DOC-021",n:"Test Plan",cat:"Core",st:"Not Started",ow:"Anna"},{id:"DOC-022",n:"Training Plan",cat:"Core",st:"Not Started",ow:""},{id:"DOC-023",n:"Go-Live Checklist",cat:"Core",st:"Not Started",ow:"Vineet"}];
+var TK=[{id:"T-001",ms:"URS",n:"Draft URS",a:"Anna Schmidt",ws:"WS-4",pri:"Critical",st:"In Progress",est:80,act:45},{id:"T-002",ms:"URS",n:"URS Review",a:"Thomas Richter",ws:"WS-2",pri:"High",st:"Not Started",est:16,act:0},{id:"T-003",ms:"Val Plan",n:"Draft Validation Plan",a:"Anna Schmidt",ws:"WS-4",pri:"High",st:"Not Started",est:40,act:0},{id:"T-004",ms:"FS/DS",n:"FS - Submissions",a:"James Wilson",ws:"WS-3",pri:"High",st:"Not Started",est:60,act:0},{id:"T-005",ms:"Int Specs",n:"Int Spec - SAP",a:"Raj Patel",ws:"WS-6",pri:"High",st:"Not Started",est:30,act:0},{id:"T-006",ms:"Int Specs",n:"Int Spec - HA Gateway",a:"Raj Patel",ws:"WS-6",pri:"High",st:"Not Started",est:40,act:0},{id:"T-007",ms:"Int Specs",n:"Int Spec - Cross-Vault",a:"Raj Patel",ws:"WS-6",pri:"Medium",st:"Not Started",est:45,act:0},{id:"T-008",ms:"Migration",n:"Legacy Data Inventory",a:"Maria Lopez",ws:"WS-5",pri:"Critical",st:"Not Started",est:50,act:0},{id:"T-009",ms:"Int Build",n:"MuleSoft Flow - SAP",a:"Raj Patel",ws:"WS-6",pri:"Critical",st:"Not Started",est:40,act:0},{id:"T-010",ms:"Training",n:"Training Materials",a:"",ws:"WS-7",pri:"Medium",st:"Not Started",est:60,act:0}];
+
+var days=Math.max(0,Math.ceil((new Date(P.goLive)-new Date())/864e5));
+var hasRed=RK.some(function(r){return r.p*r.i>=15&&r.st==="Open"});
+var hasAmber=RK.some(function(r){return r.p*r.i>=8&&r.st==="Open"});
+var health=hasRed?{l:"CRITICAL",c:C.rd}:hasAmber?{l:"AT RISK",c:C.am}:{l:"ON TRACK",c:C.gn};
+var bp=Math.round(P.budget.used/P.budget.total*100);
+var view="dashboard";
+var menuOpen=false;
+var isMobile=window.innerWidth<768;
+var taskFilter="all";
+var docFilter="all";
+
+function badge(text,color){return '<span class="badge" style="color:'+color+';background:'+color+'18;border:1px solid '+color+'30">'+text+'</span>'}
+function statusBadge(s){var m={"In Progress":C.bl,"Complete":C.gn,"Not Started":C.td,"Delayed":C.am,"Blocked":C.rd,"Open":C.am,"In Draft":C.bl,"Approved":C.gn};return badge(s,m[s]||C.td)}
+function bar(v,color,h){h=h||6;return '<div style="display:flex;align-items:center;gap:6px;width:100%"><div class="bar-bg" style="height:'+h+'px"><div class="bar-fill" style="width:'+Math.min(100,v)+'%;background:'+color+'"></div></div><span style="font-size:10px;color:'+C.tm+';min-width:28px">'+v+'%</span></div>'}
+function kpi(label,value,sub,color){return '<div class="kpi"><div style="font-size:10px;color:'+C.td+';text-transform:uppercase;letter-spacing:1.2px;font-weight:700;margin-bottom:6px">'+label+'</div><div style="font-size:26px;font-weight:800;color:'+C.tx+';letter-spacing:-1px;line-height:1">'+value+'</div>'+(sub?'<div style="font-size:10px;color:'+C.tm+';margin-top:4px">'+sub+'</div>':'')+'</div>'}
+function sec(title,color,content){return '<div class="card"><div class="section-title"><div style="width:6px;height:6px;border-radius:50%;background:'+color+'"></div><span style="font-size:14px;font-weight:700;color:'+C.tx+'">'+title+'</span></div>'+content+'</div>'}
+
+function renderDashboard(){
+  var sortedR=RK.slice().sort(function(a,b){return(b.p*b.i)-(a.p*a.i)});
+  var h='';
+  // Health + countdown
+  h+='<div class="grid" style="grid-template-columns:1fr 1fr;gap:14px"><div class="grid-2" style="display:contents">';
+  h+='<div style="background:'+health.c+'12;border-radius:14px;padding:22px;border:1px solid '+health.c+'30;display:flex;align-items:center;gap:16px"><div style="width:56px;height:56px;border-radius:50%;background:'+health.c+'20;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 24px '+health.c+'20">&#9889;</div><div><div style="font-size:10px;color:'+C.td+';text-transform:uppercase;letter-spacing:1.5px;font-weight:700">Overall Health</div><div style="font-size:28px;font-weight:900;color:'+health.c+';letter-spacing:-1px">'+health.l+'</div></div></div>';
+  h+='<div style="background:'+C.cd+';border-radius:14px;padding:22px;border:1px solid '+C.bd+';display:flex;align-items:center;gap:16px"><div style="width:56px;height:56px;border-radius:50%;background:'+C.ac+'12;display:flex;align-items:center;justify-content:center;font-size:24px">&#9201;</div><div><div style="font-size:10px;color:'+C.td+';text-transform:uppercase;letter-spacing:1.5px;font-weight:700">Go-Live</div><div style="font-size:28px;font-weight:900;color:'+C.tx+';letter-spacing:-1px">'+days+' <span style="font-size:14px;font-weight:400;color:'+C.tm+'">days</span></div></div></div>';
+  h+='</div></div>';
+  // KPIs
+  h+='<div class="grid grid-6" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">';
+  h+=kpi("Milestones","0/"+MS.length,"completed",C.ac);
+  h+=kpi("Tasks","1/"+TK.length,"in progress",C.bl);
+  h+=kpi("Open Risks",RK.filter(function(r){return r.st==="Open"}).length,RK.filter(function(r){return r.p*r.i>=15}).length+" critical",C.rd);
+  h+=kpi("Budget",bp+"%","&euro;"+Math.round(P.budget.used/1000)+"K / &euro;"+Math.round(P.budget.total/1000)+"K",C.gn);
+  h+=kpi("Documents","0/"+DOCS.length,"approved",C.pu);
+  h+=kpi("Integrations","5","mapped",C.tl);
+  h+='</div>';
+  // WS progress + Risks
+  h+='<div class="grid grid-2" style="grid-template-columns:1fr 1fr">';
+  var wsContent='';WS.forEach(function(w){wsContent+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:9px;color:'+C.ac+';min-width:32px;font-weight:800">'+w.id+'</span>'+bar(w.p,w.p>0?C.ac:C.td,7)+'</div>'});
+  h+=sec("Workstream Progress",C.ac,wsContent);
+  var riskContent='';sortedR.slice(0,5).forEach(function(r){var sc=r.p*r.i;var scC=sc>=15?C.rd:sc>=8?C.am:C.gn;riskContent+='<div style="display:flex;align-items:center;gap:10px;padding:7px 8px;border-radius:6px;border-left:3px solid '+(r.uf?"#F97316":"transparent")+';background:'+(r.uf?"rgba(249,115,22,0.06)":"transparent")+';margin-bottom:4px"><div style="min-width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;background:'+scC+'18;font-weight:800;font-size:13px;color:'+scC+'">'+sc+'</div><div style="flex:1"><div style="font-size:11px;color:'+C.tx+';font-weight:500">'+r.d+'</div><div style="font-size:9px;color:'+C.td+'">'+(r.ow||"Unassigned")+'</div></div></div>'});
+  h+=sec("Top Risks",C.rd,riskContent);
+  h+='</div>';
+  // Vendor burn
+  h+='<div class="grid grid-2" style="grid-template-columns:1fr 1fr">';
+  var vendorContent='';VN.forEach(function(v){var burn=v.h>0?Math.round(v.u/v.h*100):0;var bc=burn>20?C.rd:burn>10?C.am:C.gn;vendorContent+='<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:11px;color:'+C.tx+';font-weight:500">'+v.n+'</span><span style="font-size:11px;color:'+bc+';font-weight:700">'+burn+'%</span></div>'+bar(burn,bc,5)+'<div style="font-size:9px;color:'+C.td+';margin-top:1px">'+v.u+'/'+v.h+' hrs &bull; &euro;'+(v.u*v.r).toLocaleString()+'</div></div>'});
+  h+=sec("Vendor Burn Rate",C.am,vendorContent);
+  // Milestone mini-bars
+  var msContent='';MS.forEach(function(m){msContent+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><span style="font-size:9px;color:'+C.ac+';min-width:24px;font-weight:800">'+m.id+'</span><span style="font-size:10px;color:'+C.tm+';min-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+m.n+'</span>'+bar(m.pct,m.pct>0?C.ac:C.td,5)+'</div>'});
+  h+=sec("Milestones",C.bl,msContent);
+  h+='</div>';
+  return h;
+}
+
+function renderSetup(){
+  var h='';
+  // Project details
+  var details='<div class="grid grid-3" style="grid-template-columns:1fr 1fr 1fr;gap:14px">';
+  [{k:"Project",v:P.name},{k:"System",v:P.sys},{k:"Methodology",v:P.meth},{k:"Sponsor",v:"Dr. Sarah Mueller"},{k:"PM",v:"Vineet Pathak"},{k:"Go-Live",v:P.goLive}].forEach(function(f){details+='<div><div style="font-size:9px;color:'+C.td+';text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:3px">'+f.k+'</div><div style="padding:7px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid '+C.bd+';font-size:12px;color:'+C.tx+';font-weight:500">'+f.v+'</div></div>'});
+  details+='</div>';
+  h+=sec("Project Details",C.bl,details);
+  // Modules
+  var mods='';MODS.forEach(function(m,i){mods+='<div style="display:flex;align-items:center;gap:10px;padding:8px 0;'+(i?'border-top:1px solid '+C.bd:'')+'"><span style="flex:1;font-size:12px;color:'+C.tx+';font-weight:500">'+m.n+'</span>'+badge("GxP",C.am)+badge(m.l,m.l==="High"?C.rd:m.l==="Medium"?C.am:C.gn)+badge(m.c,m.c==="High"?C.rd:m.c==="Medium"?C.am:C.gn)+'</div>'});
+  h+=sec("Modules - GxP Impact",C.pu,mods);
+  // Integrations
+  var ints='';INTS.forEach(function(t,i){ints+='<div style="display:flex;align-items:center;gap:10px;padding:10px 0;flex-wrap:wrap;'+(i?'border-top:1px solid '+C.bd:'')+'"><div style="flex:1;min-width:150px"><div style="font-size:12px;color:'+C.tx+';font-weight:600">'+t.n+'</div><div style="font-size:10px;color:'+C.td+'"><span style="color:'+C.ac+'">'+t.s+'</span> &rarr; <span style="color:'+C.al+'">'+t.t+'</span></div></div>'+badge(t.ty,C.tl)+badge(t.mw,C.bl)+badge(t.cx,t.cx==="High"?C.rd:t.cx==="Medium"?C.am:C.gn)+'</div>'});
+  h+=sec("Integration Map",C.tl,ints);
+  // Workstreams
+  var wsc='';WS.forEach(function(w){wsc+='<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;margin-bottom:4px;border:1px solid '+C.bd+'"><span style="font-size:10px;font-weight:800;color:'+C.ac+';min-width:32px">'+w.id+'</span><span style="flex:1;font-size:12px;color:'+C.tx+';font-weight:500">'+w.n+'</span><span style="font-size:11px;color:'+C.tm+';min-width:100px">'+(w.ld||"&mdash;")+'</span>'+badge("Active",C.gn)+'</div>'});
+  h+=sec("Workstreams",C.ac,wsc);
+  return h;
+}
+
+function renderMilestones(){
+  var h='';
+  // Timeline
+  var tl='<div style="display:flex;align-items:center;gap:2px;padding:12px 0;overflow-x:auto">';
+  MS.forEach(function(m,i){var color=m.st==="Complete"?C.gn:m.st==="In Progress"?C.bl:C.td;tl+='<div style="display:flex;flex-direction:column;align-items:center;min-width:52px"><div style="width:24px;height:24px;border-radius:50%;background:'+color+'20;border:2px solid '+color+';display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:'+color+'">'+(m.pct>0?m.pct:m.id)+'</div><div style="font-size:7px;color:'+C.td+';margin-top:3px;text-align:center;max-width:52px;line-height:1.1">'+m.n+'</div></div>';if(i<MS.length-1)tl+='<div style="width:16px;height:2px;background:'+C.td+'30;margin-bottom:14px"></div>'});
+  tl+='</div>';
+  h+=sec("Timeline",C.ac,tl);
+  // Table
+  var tb='<div style="overflow-x:auto"><table><thead><tr>';
+  ["#","Phase","Milestone","Owner","Planned","Status","Progress","Dep."].forEach(function(t){tb+='<th>'+t+'</th>'});
+  tb+='</tr></thead><tbody>';
+  MS.forEach(function(m){var isGL=m.n==="GO-LIVE";tb+='<tr style="'+(isGL?'background:'+C.am+'06':'')+'"><td style="font-weight:700;color:'+C.td+'">'+m.id+'</td><td style="color:'+C.ac+'">'+m.ph+'</td><td style="color:'+C.tx+';font-weight:'+(isGL?800:500)+'">'+m.n+'</td><td>'+m.ow+'</td><td>'+m.pl+'</td><td>'+statusBadge(m.st)+'</td><td style="width:100px">'+bar(m.pct,m.pct>0?C.ac:C.td,5)+'</td><td style="color:'+C.td+'">'+(m.pr?"MS-"+m.pr:"&mdash;")+'</td></tr>'});
+  tb+='</tbody></table></div>';
+  h+=sec("All Milestones",C.am,tb);
+  return h;
+}
+
+function renderTasks(){
+  var h='';
+  var wsList=[];TK.forEach(function(t){if(wsList.indexOf(t.ws)<0)wsList.push(t.ws)});
+  h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px">';
+  h+='<span onclick="taskFilter=\'all\';render()" style="cursor:pointer">'+badge("All ("+TK.length+")",taskFilter==="all"?C.ac:C.td)+'</span>';
+  wsList.forEach(function(w){h+='<span onclick="taskFilter=\''+w+'\';render()" style="cursor:pointer">'+badge(w,taskFilter===w?C.ac:C.td)+'</span>'});
+  h+='</div>';
+  var filtered=taskFilter==="all"?TK:TK.filter(function(t){return t.ws===taskFilter});
+  var tb='<div style="overflow-x:auto"><table><thead><tr>';
+  ["ID","Milestone","Task","Assignee","WS","Priority","Status","Est","Act"].forEach(function(t){tb+='<th>'+t+'</th>'});
+  tb+='</tr></thead><tbody>';
+  filtered.forEach(function(t){tb+='<tr><td style="font-weight:700;color:'+C.td+'">'+t.id+'</td><td style="color:'+C.ac+'">'+t.ms+'</td><td style="color:'+C.tx+';font-weight:500">'+t.n+'</td><td>'+(t.a||"&mdash;")+'</td><td>'+badge(t.ws,C.tl)+'</td><td>'+badge(t.pri,t.pri==="Critical"?C.rd:t.pri==="High"?C.am:C.gn)+'</td><td>'+statusBadge(t.st)+'</td><td>'+t.est+'h</td><td style="color:'+(t.act>0?C.tx:C.td)+';font-weight:'+(t.act>0?600:400)+'">'+t.act+'h</td></tr>'});
+  tb+='</tbody></table></div>';
+  h+=sec("Tasks"+(taskFilter!=="all"?" ("+taskFilter+")":""),C.bl,tb);
+  return h;
+}
+
+function renderRisks(){
+  var h='';
+  // Heat map
+  var hm=[];for(var ri=0;ri<5;ri++){hm[ri]=[];for(var ci=0;ci<5;ci++)hm[ri][ci]=[]}
+  RK.forEach(function(r){hm[4-(r.i-1)][r.p-1].push(r)});
+  var grid='<div style="display:grid;grid-template-columns:30px repeat(5,1fr);gap:3px"><div></div>';
+  ["VL","L","M","H","VH"].forEach(function(l){grid+='<div style="text-align:center;font-size:8px;color:'+C.td+';font-weight:700;padding:3px">'+l+'</div>'});
+  var labels=["VH","H","M","L","VL"];
+  hm.forEach(function(row,ri){grid+='<div style="font-size:8px;color:'+C.td+';font-weight:700;display:flex;align-items:center;justify-content:center">'+labels[ri]+'</div>';row.forEach(function(cell,ci){var sc=(ci+1)*(5-ri);var bg=sc>=15?C.rd+"20":sc>=8?C.am+"15":C.gn+"10";grid+='<div class="heat-cell" style="background:'+bg+'">';cell.forEach(function(r){grid+='<div class="risk-dot" title="'+r.d+'" style="background:'+(r.uf?"#F97316":sc>=15?C.rd:sc>=8?C.am:C.gn)+'">'+r.id.slice(-1)+'</div>'});grid+='</div>'})});
+  grid+='</div><div style="text-align:center;font-size:8px;color:'+C.td+';margin-top:6px">&larr; Probability | &uarr; Impact</div>';
+  h+=sec("Risk Heat Map",C.rd,grid);
+  // Register
+  var sorted=RK.slice().sort(function(a,b){return(b.p*b.i)-(a.p*a.i)});
+  var reg='';sorted.forEach(function(r){var sc=r.p*r.i;var scC=sc>=15?C.rd:sc>=8?C.am:C.gn;reg+='<div class="risk-card" style="background:'+(r.uf?"rgba(249,115,22,0.05)":C.bg+"80")+';border-color:'+(r.uf?"rgba(249,115,22,0.2)":C.bd)+';border-left:4px solid '+(r.uf?"#F97316":scC)+'"><div style="min-width:40px;text-align:center"><div style="font-size:20px;font-weight:900;color:'+scC+'">'+sc+'</div><div style="font-size:7px;color:'+C.td+'">'+r.p+'x'+r.i+'</div></div><div style="flex:1"><div style="display:flex;gap:6px;margin-bottom:3px"><span style="font-size:9px;font-weight:700;color:'+C.td+'">'+r.id+'</span>'+badge(r.cat,C.ac)+(r.uf?badge("Unforeseen","#F97316"):"")+'</div><div style="font-size:12px;color:'+C.tx+';font-weight:500">'+r.d+'</div><div style="font-size:10px;color:'+C.td+';margin-top:2px">Owner: '+(r.ow||"Unassigned")+' | '+r.res+'</div></div>'+statusBadge(r.st)+'</div>'});
+  h+=sec("Risk Register",C.am,reg);
+  return h;
+}
+
+function renderDocuments(){
+  var h='';
+  var cats=[];DOCS.forEach(function(d){if(cats.indexOf(d.cat)<0)cats.push(d.cat)});
+  h+='<div style="display:flex;align-items:center;gap:12px;margin-bottom:10px"><span style="font-size:13px;color:'+C.tx+';font-weight:700">Readiness: 0/'+DOCS.length+' approved</span>'+bar(0,C.gn,8)+'</div>';
+  h+='<div style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px">';
+  h+='<span onclick="docFilter=\'all\';render()" style="cursor:pointer">'+badge("All ("+DOCS.length+")",docFilter==="all"?C.ac:C.td)+'</span>';
+  cats.forEach(function(c){var cnt=DOCS.filter(function(d){return d.cat===c}).length;h+='<span onclick="docFilter=\''+c+'\';render()" style="cursor:pointer">'+badge(c+" ("+cnt+")",docFilter===c?C.ac:C.td)+'</span>'});
+  h+='</div>';
+  var filtered=docFilter==="all"?DOCS:DOCS.filter(function(d){return d.cat===docFilter});
+  var tb='<div style="overflow-x:auto"><table><thead><tr>';
+  ["ID","Document","Category","Owner","Status"].forEach(function(t){tb+='<th>'+t+'</th>'});
+  tb+='</tr></thead><tbody>';
+  filtered.forEach(function(d){tb+='<tr><td style="font-weight:700;color:'+C.td+'">'+d.id+'</td><td style="color:'+C.tx+';font-weight:500">'+d.n+'</td><td>'+badge(d.cat,C.tl)+'</td><td>'+(d.ow||"&mdash;")+'</td><td>'+statusBadge(d.st)+'</td></tr>'});
+  tb+='</tbody></table></div>';
+  h+=sec("Document Checklist",C.pu,tb);
+  return h;
+}
+
+function renderCosts(){
+  var h='';
+  var b=P.budget;
+  h+='<div class="grid grid-3" style="grid-template-columns:1fr 1fr 1fr">';
+  h+=kpi("Total Budget","&euro;"+Math.round(b.total/1000)+"K","",C.ac);
+  h+=kpi("Consumed","&euro;"+(b.used/1000).toFixed(1)+"K",bp+"%",C.am);
+  h+=kpi("Remaining","&euro;"+Math.round((b.total-b.used)/1000)+"K","",C.gn);
+  h+='</div>';
+  var tb='<div style="overflow-x:auto"><table><thead><tr>';
+  ["Vendor","Type","Hours","Used","Burn %","Cost","RAG"].forEach(function(t){tb+='<th>'+t+'</th>'});
+  tb+='</tr></thead><tbody>';
+  VN.forEach(function(v){var burn=v.h>0?Math.round(v.u/v.h*100):0;var bc=burn>20?C.rd:burn>10?C.am:C.gn;tb+='<tr><td style="color:'+C.tx+';font-weight:500">'+v.n+'</td><td>'+badge(v.ty,C.bl)+'</td><td>'+v.h+'</td><td style="color:'+C.tx+';font-weight:600">'+v.u+'</td><td style="width:90px">'+bar(burn,bc,5)+'</td><td style="color:'+C.tx+';font-weight:600">&euro;'+(v.u*v.r).toLocaleString()+'</td><td><span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:'+bc+';box-shadow:0 0 8px '+bc+'40"></span></td></tr>'});
+  tb+='</tbody></table></div>';
+  h+=sec("Vendor Detail",C.am,tb);
+  return h;
+}
+
+function renderSteerCo(){
+  var sorted=RK.slice().sort(function(a,b){return(b.p*b.i)-(a.p*a.i)});
+  var h='<div class="card" style="max-width:860px;padding:28px">';
+  h+='<div style="display:flex;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px"><div><h2 style="margin:0;font-size:20px;font-weight:800;color:'+C.tx+'">Steering Committee Report</h2><div style="font-size:12px;color:'+C.tm+';margin-top:2px">'+P.name+' &mdash; '+P.sub+'</div></div><div style="text-align:right"><div style="padding:4px 14px;border-radius:6px;background:'+health.c+'12;border:1px solid '+health.c+'30;color:'+health.c+';font-weight:800;font-size:13px">'+health.l+'</div><div style="font-size:10px;color:'+C.td+';margin-top:3px">'+new Date().toLocaleDateString("en-GB",{day:"2-digit",month:"short",year:"numeric"})+'</div></div></div>';
+  h+='<div style="background:'+C.rd+'08;border-radius:10px;padding:16px;margin-bottom:20px;border:1px solid '+C.rd+'20"><div style="font-size:11px;font-weight:700;color:'+C.rd+';text-transform:uppercase;letter-spacing:.8px;margin-bottom:10px">&#9888; Decisions Needed</div>';
+  for(var i=1;i<=3;i++)h+='<div style="display:flex;gap:6px;margin-bottom:6px"><span style="min-width:20px;height:20px;border-radius:4px;background:'+C.rd+'15;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:'+C.rd+'">'+i+'</span><input style="flex:1;background:rgba(255,255,255,0.04);border:1px solid '+C.bd+';border-radius:4px;padding:5px 8px;color:'+C.tx+';font-size:11px" placeholder="Enter decision..."></div>';
+  h+='</div>';
+  h+='<div class="grid grid-4" style="grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px">';
+  [{l:"Milestones",v:"0/"+MS.length},{l:"Risks",v:RK.filter(function(r){return r.st==="Open"}).length},{l:"Budget",v:bp+"%"},{l:"Days Left",v:days}].forEach(function(m){h+='<div style="text-align:center;padding:10px;border-radius:6px;background:'+C.ac+'06;border:1px solid '+C.bd+'"><div style="font-size:9px;color:'+C.td+';text-transform:uppercase;letter-spacing:1px;font-weight:700">'+m.l+'</div><div style="font-size:20px;font-weight:800;color:'+C.tx+';margin-top:2px">'+m.v+'</div></div>'});
+  h+='</div>';
+  h+='<table><thead><tr>';["Risk","Score","Owner","Response"].forEach(function(t){h+='<th>'+t+'</th>'});
+  h+='</tr></thead><tbody>';sorted.slice(0,5).forEach(function(r){var sc=r.p*r.i;var scC=sc>=15?C.rd:sc>=8?C.am:C.gn;h+='<tr><td style="color:'+C.tx+'">'+r.d+'</td><td><span style="color:'+scC+';font-weight:800;font-size:13px">'+sc+'</span></td><td>'+(r.ow||"&mdash;")+'</td><td>'+badge(r.res,C.ac)+'</td></tr>'});
+  h+='</tbody></table>';
+  h+='<div style="text-align:center;font-size:9px;color:'+C.td+';margin-top:16px;padding-top:12px;border-top:1px solid '+C.bd+'">Auto-generated | PharmaPM Pro v1.2 | AivelloStudio</div>';
+  h+='</div>';
+  return h;
+}
+
+var nav=[{id:"dashboard",l:"Dashboard",e:"&#128202;"},{id:"steerco",l:"SteerCo Report",e:"&#128203;"},{id:"setup",l:"Project Setup",e:"&#9881;"},{id:"milestones",l:"Milestones",e:"&#127919;"},{id:"tasks",l:"Tasks",e:"&#9989;"},{id:"risks",l:"Risks",e:"&#9888;"},{id:"documents",l:"Documents",e:"&#128196;"},{id:"costs",l:"Cost Tracker",e:"&#128176;"}];
+
+window.setView=function(v){view=v;menuOpen=false;render()};
+
+function render(){
+  var content;
+  switch(view){
+    case"dashboard":content=renderDashboard();break;
+    case"steerco":content=renderSteerCo();break;
+    case"setup":content=renderSetup();break;
+    case"milestones":content=renderMilestones();break;
+    case"tasks":content=renderTasks();break;
+    case"risks":content=renderRisks();break;
+    case"documents":content=renderDocuments();break;
+    case"costs":content=renderCosts();break;
+    default:content=renderDashboard();
+  }
+
+  var sb='<div style="width:'+(isMobile?(menuOpen?200:0):(56))+'px;background:'+C.sb+';border-right:1px solid '+C.bd+';display:flex;flex-direction:column;transition:width .25s ease;flex-shrink:0;overflow:hidden;'+(isMobile?'position:fixed;z-index:50;height:100%':'')+'">';
+  sb+='<div style="padding:14px 10px;border-bottom:1px solid '+C.bd+';cursor:pointer" onclick="'+(isMobile?'menuOpen=!menuOpen;render()':'')+'"><div style="display:flex;align-items:center;gap:8px"><div style="width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,'+C.ac+','+C.tl+');display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px">&#9889;</div></div></div>';
+  sb+='<div style="flex:1;padding:6px;display:flex;flex-direction:column;gap:1px">';
+  nav.forEach(function(n){var a=view===n.id;sb+='<div class="nav-item'+(a?" active":"")+'" onclick="setView(\''+n.id+'\')"><span style="font-size:14px;min-width:20px;text-align:center">'+n.e+'</span>'+((!isMobile||menuOpen)?'<span style="font-size:12px;font-weight:'+(a?600:400)+';color:'+(a?C.ac:C.tm)+';white-space:nowrap">'+n.l+'</span>':'')+'</div>'});
+  sb+='</div></div>';
+
+  var overlay=isMobile&&menuOpen?'<div onclick="menuOpen=false;render()" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:40"></div>':'';
+
+  var topbar='<div style="padding:10px 16px;border-bottom:1px solid '+C.bd+';display:flex;align-items:center;justify-content:space-between;background:'+C.sf+';flex-shrink:0">';
+  topbar+='<div style="display:flex;align-items:center;gap:10px">';
+  if(isMobile)topbar+='<span onclick="menuOpen=!menuOpen;render()" style="font-size:20px;cursor:pointer;padding:4px">&#9776;</span>';
+  topbar+='<div><div style="margin:0;font-size:16px;font-weight:800;color:'+C.tx+';letter-spacing:-.5px">'+nav.find(function(n){return n.id===view}).l+'</div><div style="font-size:10px;color:'+C.td+'">'+P.name+' &mdash; '+P.sub+'</div></div></div>';
+  topbar+='<div style="display:flex;gap:8px"><div style="padding:3px 10px;border-radius:4px;background:'+health.c+'12;border:1px solid '+health.c+'30"><span style="font-size:10px;font-weight:700;color:'+health.c+'">'+health.l+'</span></div><div style="padding:3px 10px;border-radius:4px;background:'+C.ac+'10;border:1px solid '+C.ac+'30"><span style="font-size:10px;font-weight:600;color:'+C.ac+'">'+days+'d</span></div></div></div>';
+
+  document.getElementById("app").innerHTML='<div style="display:flex;height:100vh;height:100dvh;overflow:hidden">'+sb+overlay+'<div style="flex:1;display:flex;flex-direction:column;overflow:hidden">'+topbar+'<div style="flex:1;overflow:auto;padding:'+(isMobile?12:20)+'px;-webkit-overflow-scrolling:touch"><div style="max-width:1100px;display:flex;flex-direction:column;gap:16px">'+content+'</div></div></div></div>';
+}
+
+render();
+window.addEventListener("resize",function(){isMobile=window.innerWidth<768;render()});
+})();
+</script>
+</body>
+</html>
